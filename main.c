@@ -1,8 +1,7 @@
-#include <string.h>
-#include <unistd.h>
+#include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ncurses.h>
+#include <unistd.h>
 
 uint32_t score = 0;
 uint32_t tick = 0;
@@ -18,9 +17,7 @@ uint32_t food_y = 1;
 uint32_t direction = 1;
 
 uint32_t snake_color = 3;
-void init_snake() {
-
-}
+void init_snake() {}
 
 void clear_snake() {
   move(snake_head_y, snake_head_x);
@@ -88,7 +85,6 @@ int main() {
 
   return 0;
 }
-
 
 // void backup() {
 //   move(0, 5);
