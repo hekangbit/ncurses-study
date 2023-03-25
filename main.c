@@ -4,10 +4,18 @@
 #include <string.h>
 #include <ncurses.h>
 
+uint32_t score = 0;
 uint32_t tick = 0;
 
+uint32_t height = 30;
+uint32_t width = 40;
 uint32_t snake_head_x = 20;
 uint32_t snake_head_y = 1;
+
+uint32_t food_x = 1;
+uint32_t food_y = 1;
+
+uint32_t direction = 1;
 
 uint32_t snake_color = 3;
 void init_snake() {
@@ -16,35 +24,31 @@ void init_snake() {
 
 void clear_snake() {
   move(snake_head_y, snake_head_x);
-  attron(262176 | (0 << 8));
-  printw(" ");
-  attroff(262176 | (0 << 8));
+  printw("  ");
 }
 
 void draw_snake() {
   move(snake_head_y, snake_head_x);
   attron(262176 | (snake_color << 8));
-  printw(" ");
+  printw("  ");
   attroff(262176 | (snake_color << 8));
 }
 
+void draw_score() {
+  attron(262176 | (7 << 8));
+  move(height - 1, 5);
+  printw("Score: %d", score);
+  attroff(262176 | (7 << 8));
+}
+
 void do_tick() {
-  if (++tick > 100) {
+  if (++tick > 10) {
     tick = 0;
     clear_snake();
-    snake_head_y++;
-    draw_snake();
-    
-    char buf[128];
-    move(30, 10);
-    attron(262176 | (1 << 8));
-    sprintf(buf, "snake_head_y=%d", snake_head_y);
-    printw(buf);
-    attroff(262176 | (1 << 8));
-
-    if (snake_head_y >= 40) {
-      snake_head_y = 1;
+    if (++snake_head_y >= height - 1) {
+      snake_head_y = 2;
     }
+    draw_snake();
   }
 }
 
@@ -71,34 +75,35 @@ int main() {
   noecho();
   timeout(0);
   curs_set(0);
+  // resizeterm(22, 22);
   attron(262176 | 7 << 8);
-  box(stdscr, '#', '#');
+  box(stdscr, 0, 0);
   attroff(262176 | 7 << 8);
-  char *c = "welcome to snake game!";
-  mvprintw(LINES / 2, (COLS - strlen(c)) / 2, c);
-
-  char buf[128];
-  move(100, 50);
-  attron(262176 | (1 << 8));
-  sprintf(buf, "LINES=%d, COLS=%d", LINES, COLS);
-  printw(buf);
-  printw(" ");
-  attroff(262176 | (1 << 8));
-  for (int i = 1; i < 8; i++) {
-    move(i, 10);
-    attron(262176 | (i % 8) << 8);
-    printw(" ");
-    attroff(262176 | (i % 8) << 8);
-  }
-  move(20, 10);
-  attron(262176 | (4 << 8));
-  printw(" ");
-  attroff(262176 | (4 << 8));
+  height = LINES;
+  width = COLS;
+  draw_score();
   refresh();
   run_loop();
-  getch();
   endwin();
 
   return 0;
 }
 
+
+// void backup() {
+//   move(0, 5);
+//   printw("AAA");
+//   move(1, 5);
+//   printw("BBB");
+//   mvprintw(height - 1, 10, "Score: %d", score);
+//   char *c = "welcome to snake game!";
+//   mvprintw(LINES / 2, (COLS - strlen(c)) / 2, c);
+//   refresh();
+//   test show color
+//   for (int i = 1; i < 8; i++) {
+//     move(i, 10);
+//     attron(262176 | (i % 8) << 8);
+//     printw(" ");
+//     attroff(262176 | (i % 8) << 8);
+//   }
+// }
